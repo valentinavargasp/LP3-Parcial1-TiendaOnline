@@ -1,0 +1,177 @@
+@page
+@model parcial1.Pages.ModificacionProductoModel
+@{
+    ViewData["Title"] = "Modificación de Producto";
+}
+
+<!--
+    ==========================================================================
+     Formulario de Modificación
+    ==========================================================================
+-->
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Barra superior con título e hipervínculo de retorno -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">
+                        <i class="bi bi-pencil-square text-primary me-2"></i>Modificación de Producto
+                    </h3>
+                    <p class="text-secondary small mb-0">Localice el producto por su código y actualice sus características.</p>
+                </div>
+                <!-- Hipervínculo para retornar al menú principal -->
+                <a href="/Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Menú
+                </a>
+            </div>
+
+            <!-- Alertas de estado y validación -->
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    @Model.MensajeExito
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeAdvertencia))
+            {
+                <div class="alert alert-warning alert-dismissible fade show shadow-sm border-warning" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    @Model.MensajeAdvertencia
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-x-circle-fill me-2"></i>
+                    @Model.MensajeError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <!-- Tarjeta de Búsqueda y Edición -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        <!-- Campos ocultos para resguardar los valores originales (utilizados para validar cambio mínimo) -->
+                        <input type="hidden" name="OriginalNombre" asp-for="OriginalNombre" />
+                        <input type="hidden" name="OriginalPrecio" asp-for="OriginalPrecio" />
+                        <input type="hidden" name="OriginalIdCategoria" asp-for="OriginalIdCategoria" />
+
+                        <!-- Entrada de Código y Búsqueda -->
+                        <div class="row align-items-end g-3 mb-4">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold text-secondary" for="inputIdProducto">
+                                    Código del Producto (ID) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="inputIdProducto"
+                                       name="IdProducto" 
+                                       asp-for="IdProducto" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="Ej: 1, 2, 3..." 
+                                       required />
+                            </div>
+                            <div class="col-md-5 d-flex gap-2">
+                                <button type="submit" 
+                                        name="Accion" 
+                                        value="Buscar" 
+                                        class="btn btn-primary btn-lg flex-grow-1 fw-semibold">
+                                    <i class="bi bi-search me-1"></i> Buscar
+                                </button>
+                                <a href="/ConsultaProducto" class="btn btn-light btn-lg border" title="Ver catálogo">
+                                    Catálogo
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Campos Editables -->
+                        <div class="border-top pt-4 @(Model.ProductoCargado ? "" : "opacity-50 pe-none")">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold text-dark mb-0">Campos del Producto</h6>
+                                @if (Model.ProductoCargado)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                        Producto #@Model.IdProducto activo
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Campo: Nombre -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-secondary" for="modNombre">
+                                    Nombre del Producto
+                                </label>
+                                <input type="text" 
+                                       id="modNombre"
+                                       name="Nombre" 
+                                       asp-for="Nombre" 
+                                       class="form-control" 
+                                       placeholder="Ingrese el nuevo nombre..." 
+                                       required />
+                            </div>
+
+                            <!-- Campo: Precio -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-secondary" for="modPrecio">
+                                    Precio Unitario ($)
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">$</span>
+                                    <input type="number" 
+                                           step="0.01" 
+                                           min="0.01"
+                                           id="modPrecio"
+                                           name="Precio" 
+                                           asp-for="Precio" 
+                                           class="form-control" 
+                                           placeholder="0.00" 
+                                           required />
+                                </div>
+                            </div>
+
+                            <!-- Campo: Categoría (DropDownList) -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-secondary" for="modCategoria">
+                                    Categoría Asignada
+                                </label>
+                                <select id="modCategoria"
+                                        name="IdCategoria" 
+                                        asp-for="IdCategoria" 
+                                        asp-items="Model.Categorias" 
+                                        class="form-select" 
+                                        required>
+                                    <option value="">-- Seleccionar categoría --</option>
+                                </select>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                                <a href="/Index" class="btn btn-light px-4 py-2 border">Cancelar</a>
+                                <button type="submit" 
+                                        name="Accion" 
+                                        value="Modificar" 
+                                        class="btn btn-warning px-4 py-2 fw-semibold text-dark shadow-sm">
+                                    <i class="bi bi-save me-1"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Hipervínculo inferior adicional -->
+            <div class="text-center mt-4">
+                <a href="/Index" class="text-decoration-none text-muted small">
+                    <i class="bi bi-house me-1"></i> Volver al Menú principal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

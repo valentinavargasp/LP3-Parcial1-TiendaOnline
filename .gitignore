@@ -1,0 +1,33 @@
+## Build and artifact directories
+[Bb]in/
+[Oo]bj/
+out/
+
+## Visual Studio & VS Code files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Log files
+*.log
+*.tlog
+
+## OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+## ASP.NET temporary files
+Generated\ Files/
+[Aa]pp_[Dd]ata/

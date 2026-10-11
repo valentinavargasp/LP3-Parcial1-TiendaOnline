@@ -1,0 +1,132 @@
+@page
+@model parcial1.Pages.BajaProductoModel
+@{
+    ViewData["Title"] = "Baja de Producto";
+}
+
+<!--
+    ==========================================================================
+     Formulario de Baja 
+    ==========================================================================
+-->
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Barra superior con título e hipervínculo de retorno -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">
+                        <i class="bi bi-trash3 text-danger me-2"></i>Baja de Producto
+                    </h3>
+                    <p class="text-secondary small mb-0">Localice el producto a eliminar y confirme la operación.</p>
+                </div>
+                <!-- Hipervínculo para retornar a la página principal -->
+                <a href="/Index" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Menú
+                </a>
+            </div>
+
+            <!-- Alertas de estado -->
+            @if (!string.IsNullOrEmpty(Model.MensajeExito))
+            {
+                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    @Model.MensajeExito
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.MensajeError))
+            {
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="bi bi-x-circle-fill me-2"></i>
+                    @Model.MensajeError
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            }
+
+            <!-- Tarjeta de Búsqueda para Baja -->
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        <div class="row align-items-end g-3 mb-2">
+                            <div class="col-md-7">
+                                <label class="form-label fw-semibold text-secondary" for="idBajaProducto">
+                                    Código del Producto (ID) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="idBajaProducto"
+                                       name="IdProducto" 
+                                       asp-for="IdProducto" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="Ej: 1, 2, 3..." 
+                                       required />
+                            </div>
+                            <div class="col-md-5 d-flex gap-2">
+                                <button type="submit" 
+                                        name="Accion" 
+                                        value="Buscar" 
+                                        class="btn btn-primary btn-lg flex-grow-1 fw-semibold">
+                                    <i class="bi bi-search me-1"></i> Buscar
+                                </button>
+                                <a href="/ConsultaProducto" class="btn btn-light btn-lg border" title="Ver catálogo">
+                                    Catálogo
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Previsualización y Confirmación -->
+                    @if (Model.ProductoSeleccionado != null)
+                    {
+                        <div class="mt-4 p-4 border border-danger-subtle rounded-4 bg-danger-subtle bg-opacity-10">
+                            <h6 class="text-danger fw-bold mb-3">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Confirmación requerida
+                            </h6>
+
+                            <ul class="list-group list-group-flush mb-4 bg-transparent rounded-3 border">
+                                <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                    <span class="text-muted">Código:</span>
+                                    <strong class="text-secondary font-monospace">#@Model.ProductoSeleccionado.IdProducto</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                    <span class="text-muted">Nombre:</span>
+                                    <strong class="text-dark">@Model.ProductoSeleccionado.Nombre</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                    <span class="text-muted">Precio:</span>
+                                    <strong class="text-dark font-monospace">@Model.ProductoSeleccionado.Precio.ToString("C")</strong>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex justify-content-between">
+                                    <span class="text-muted">Categoría:</span>
+                                    <span class="badge bg-light text-dark border">@Model.ProductoSeleccionado.Categoria</span>
+                                </li>
+                            </ul>
+
+                            <form method="post" onsubmit="return confirm('¿Confirma la eliminación definitiva del producto \'@Model.ProductoSeleccionado.Nombre\'?');">
+                                <input type="hidden" name="IdProducto" value="@Model.ProductoSeleccionado.IdProducto" />
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/BajaProducto" class="btn btn-light border px-4">Cancelar</a>
+                                    <button type="submit" 
+                                            name="Accion" 
+                                            value="Eliminar" 
+                                            class="btn btn-danger px-4 fw-semibold shadow-sm">
+                                        <i class="bi bi-trash-fill me-1"></i> Eliminar Registro
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Hipervínculo inferior adicional -->
+            <div class="text-center mt-4">
+                <a href="/Index" class="text-decoration-none text-muted small">
+                    <i class="bi bi-house me-1"></i> Volver al Menú principal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
