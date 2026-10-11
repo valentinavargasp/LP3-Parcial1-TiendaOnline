@@ -18,10 +18,6 @@ namespace parcial1.Pages
         [BindProperty(SupportsGet = true)]
         public string? CriterioBusqueda { get; set; }
 
-        // Filtro por categoría opcional
-        [BindProperty(SupportsGet = true)]
-        public int? FiltroCategoria { get; set; }
-
         // Lista de productos con su categoría resultante del JOIN
         public List<ProductoItem> ListaProductos { get; set; } = new();
 
@@ -48,7 +44,6 @@ namespace parcial1.Pages
                 conexion.Open();
 
                 // Consulta relacional con JOIN explícito entre productos y categorias
-                // (Equivalente al SelectQuery con JOIN)
                 string sql = @"
                     SELECT 
                         p.idProducto,
@@ -60,14 +55,16 @@ namespace parcial1.Pages
                     INNER JOIN categorias c ON p.idCategoria = c.idCategoria
                     WHERE 1 = 1";
 
-                // Si el usuario ingresó un criterio de búsqueda (ID numérico o fragmento de nombre)
-                bool esNumero = int.TryParse(CriterioBusqueda, out int idBuscado);
+                // Si el usuario ingresó un criterio de búsqueda:
+                // Si es un número entero (ej: 1, 2, 3), se busca con precisión por idProducto.
+                // Si es texto (ej: Lenovo, Sony), se busca por coincidencia en el nombre.
+                bool esNumero = int.TryParse(CriterioBusqueda?.Trim(), out int idBuscado);
 
                 if (!string.IsNullOrWhiteSpace(CriterioBusqueda))
                 {
                     if (esNumero)
                     {
-                        sql += " AND (p.idProducto = @idBuscado OR p.nombre LIKE @patron)";
+                        sql += " AND p.idProducto = @idBuscado";
                     }
                     else
                     {
@@ -85,7 +82,10 @@ namespace parcial1.Pages
                         {
                             comando.Parameters.AddWithValue("@idBuscado", idBuscado);
                         }
-                        comando.Parameters.AddWithValue("@patron", "%" + CriterioBusqueda.Trim() + "%");
+                        else
+                        {
+                            comando.Parameters.AddWithValue("@patron", "%" + CriterioBusqueda.Trim() + "%");
+                        }
                     }
 
                     using (SqlDataReader lector = comando.ExecuteReader())

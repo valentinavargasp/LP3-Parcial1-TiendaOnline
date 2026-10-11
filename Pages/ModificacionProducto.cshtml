@@ -6,7 +6,7 @@
 
 <!--
     ==========================================================================
-     Formulario de Modificación
+     Formulario de Modificación 
     ==========================================================================
 -->
 
@@ -58,31 +58,23 @@
             <!-- Tarjeta de Búsqueda y Edición -->
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-body p-4 p-md-5">
-                    <form method="post">
-                        <!-- Campos ocultos para resguardar los valores originales (utilizados para validar cambio mínimo) -->
-                        <input type="hidden" name="OriginalNombre" asp-for="OriginalNombre" />
-                        <input type="hidden" name="OriginalPrecio" asp-for="OriginalPrecio" />
-                        <input type="hidden" name="OriginalIdCategoria" asp-for="OriginalIdCategoria" />
-
-                        <!-- Entrada de Código y Búsqueda -->
-                        <div class="row align-items-end g-3 mb-4">
+                    <!-- Formulario de Búsqueda por ID (GET independiente para evitar bloqueos de validación) -->
+                    <form method="get" class="mb-4">
+                        <div class="row align-items-end g-3">
                             <div class="col-md-7">
                                 <label class="form-label fw-semibold text-secondary" for="inputIdProducto">
                                     Código del Producto (ID) <span class="text-danger">*</span>
                                 </label>
                                 <input type="number" 
                                        id="inputIdProducto"
-                                       name="IdProducto" 
-                                       asp-for="IdProducto" 
+                                       name="id" 
+                                       value="@(Model.IdProducto > 0 ? Model.IdProducto : null)" 
                                        class="form-control form-control-lg" 
                                        placeholder="Ej: 1, 2, 3..." 
                                        required />
                             </div>
                             <div class="col-md-5 d-flex gap-2">
-                                <button type="submit" 
-                                        name="Accion" 
-                                        value="Buscar" 
-                                        class="btn btn-primary btn-lg flex-grow-1 fw-semibold">
+                                <button type="submit" class="btn btn-primary btn-lg flex-grow-1 fw-semibold">
                                     <i class="bi bi-search me-1"></i> Buscar
                                 </button>
                                 <a href="/ConsultaProducto" class="btn btn-light btn-lg border" title="Ver catálogo">
@@ -90,6 +82,15 @@
                                 </a>
                             </div>
                         </div>
+                    </form>
+
+                    <!-- Formulario de Edición (POST independiente) -->
+                    <form method="post">
+                        <!-- Campos ocultos de resguardo -->
+                        <input type="hidden" name="IdProducto" value="@Model.IdProducto" />
+                        <input type="hidden" name="OriginalNombre" value="@Model.OriginalNombre" />
+                        <input type="hidden" name="OriginalPrecio" value="@Model.OriginalPrecio" />
+                        <input type="hidden" name="OriginalIdCategoria" value="@Model.OriginalIdCategoria" />
 
                         <!-- Sección de Campos Editables -->
                         <div class="border-top pt-4 @(Model.ProductoCargado ? "" : "opacity-50 pe-none")">
@@ -98,7 +99,7 @@
                                 @if (Model.ProductoCargado)
                                 {
                                     <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                        Producto #@Model.IdProducto activo
+                                        Producto #@Model.IdProducto cargado
                                     </span>
                                 }
                             </div>
@@ -169,7 +170,7 @@
             <!-- Hipervínculo inferior adicional -->
             <div class="text-center mt-4">
                 <a href="/Index" class="text-decoration-none text-muted small">
-                    <i class="bi bi-house me-1"></i> Volver al Menú principal
+                    <i class="bi bi-house me-1"></i> Retornar a la Página Principal
                 </a>
             </div>
         </div>
