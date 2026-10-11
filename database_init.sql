@@ -16,6 +16,10 @@ GO
 USE tienda_db;
 GO
 
+-- Evitar saltos de 1000 en IDs autoincrementales al reiniciar SQL Server
+ALTER DATABASE SCOPED CONFIGURATION SET IDENTITY_CACHE = OFF;
+GO
+
 -- Eliminación previa para pruebas limpias
 IF OBJECT_ID('productos', 'U') IS NOT NULL DROP TABLE productos;
 IF OBJECT_ID('categorias', 'U') IS NOT NULL DROP TABLE categorias;
